@@ -9,13 +9,16 @@ def read_root():
     print("Received a GET request at /")
     return {"message": "Hello, World!"}, 200
 
-@app.post(API_BASE + "/")
-async def create_order(request: fastapi.Request):
-    print(f"Received a POST request at {API_BASE}/")
+@app.post("/webhook")
+async def webhook(request: fastapi.Request):
     body = await request.json()
-    intent = body["queryResult"]
-    print(intent)
-    return {"fulfillmentText": "This is a response from the webhook!"}, 200
+
+    intent = body["queryResult"]["intent"]["displayName"]
+    params = body["queryResult"]["parameters"]
+
+    return {
+        "fulfillmentText": f"Intent: {intent}, Params: {params}"
+    }
 
 
 
