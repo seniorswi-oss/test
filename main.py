@@ -12,6 +12,7 @@ def read_root():
 @app.post("/webhook")
 async def webhook(request: fastapi.Request):
     body = await request.json()
+    print(body)
 
     intent = body["queryResult"]
     return {
