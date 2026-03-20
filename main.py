@@ -13,11 +13,9 @@ def read_root():
 async def webhook(request: fastapi.Request):
     body = await request.json()
 
-    intent = body["queryResult"]["intent"]["displayName"]
-    params = body["queryResult"]["parameters"]
-
+    intent = body["queryResult"]
     return {
-        "fulfillmentText": f"Intent: {intent}, Params: {params}"
+        "fulfillmentText": f"Intent: {intent}"
     }
 
 
