@@ -10,12 +10,12 @@ def read_root():
     return {"message": "Hello, World!"}
 
 @app.post(API_BASE + "/")
-async   def create_order(request: fastapi.Request):
+async def create_order(request: fastapi.Request):
     print(f"Received a POST request at {API_BASE}/")
     body = await request.json()
     intent = body["queryResult"]
-    print(f"Creating order for {intent}")
-    return {"Item": intent}
+    print(intent)
+    return {"fulfillmentText": "This is a response from the webhook!"}
 
 
 
