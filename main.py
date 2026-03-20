@@ -16,7 +16,15 @@ async def webhook(request: fastapi.Request):
 
     intent = body["queryResult"]
     return {
-        "fulfillmentText": f"Intent: {intent}"
+        "fulfillmentMessages": [
+            {
+            "text": {
+                "text": [
+                "Text response from webhook"
+                ]
+            }
+            }
+        ]
     }
 
 
