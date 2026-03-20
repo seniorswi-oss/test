@@ -1,9 +1,15 @@
 import fastapi
 import uvicorn
 
+API_BASE = "/api/v1"
+
 app = fastapi.FastAPI()
-@app.post("/")
-def read_root(item: str = fastapi.Form(...), qty: int = fastapi.Form(...)):
+@app.get("/")
+def read_root():
+    return {"message": "Hello, World!"}
+
+@app.post(API_BASE + "/")
+def create_order(item: str = fastapi.Form(...), qty: int = fastapi.Form(...)):
     return {"Item": item, "Quantity": qty}
 
 
