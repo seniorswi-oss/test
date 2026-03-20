@@ -15,7 +15,9 @@ async def webhook(request: fastapi.Request):
 
     intent = body["queryResult"]["intent"]["displayName"]
     params = body["queryResult"]["parameters"]
+    action = body["queryResult"]["action"]
 
+    print(action)
     print(intent)
     print(params)
     return {
