@@ -12,9 +12,12 @@ def read_root():
 @app.post("/webhook")
 async def webhook(request: fastapi.Request):
     body = await request.json()
-    print(body)
 
-    intent = body["queryResult"]
+    intent = body["queryResult"]["intent"]["displayName"]
+    params = body["queryResult"]["parameters"]
+
+    print(intent)
+    print(params)
     return {
         "fulfillmentMessages": [
             {
