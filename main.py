@@ -10,6 +10,8 @@ def read_root():
 
 @app.post(API_BASE + "/")
 def create_order(item: str = fastapi.Form(...), qty: int = fastapi.Form(...)):
+    with open("orders.txt", "a") as f:
+        f.write(f"{item}: {qty}\n")
     return {"Item": item, "Quantity": qty}
 
 
