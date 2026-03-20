@@ -7,7 +7,7 @@ app = fastapi.FastAPI()
 @app.get("/")
 def read_root():
     print("Received a GET request at /")
-    return {"message": "Hello, World!"}
+    return {"message": "Hello, World!"}, 200
 
 @app.post(API_BASE + "/")
 async def create_order(request: fastapi.Request):
@@ -15,7 +15,7 @@ async def create_order(request: fastapi.Request):
     body = await request.json()
     intent = body["queryResult"]
     print(intent)
-    return {"fulfillmentText": "This is a response from the webhook!"}
+    return {"fulfillmentText": "This is a response from the webhook!"}, 200
 
 
 
