@@ -1,18 +1,21 @@
 import fastapi
 import uvicorn
 
-API_BASE = "/api/v1"
+API_BASE = ""
 
 app = fastapi.FastAPI()
 @app.get("/")
 def read_root():
+    print("Received a GET request at /")
     return {"message": "Hello, World!"}
 
 @app.post(API_BASE + "/")
-def create_order(item: str = fastapi.Form(...), qty: int = fastapi.Form(...)):
-    with open("orders.txt", "a") as f:
-        f.write(f"{item}: {qty}\n")
-    return {"Item": item, "Quantity": qty}
+async   def create_order(request: fastapi.Request):
+    print(f"Received a POST request at {API_BASE}/")
+    body = await request.json()
+    intent = body["queryResult"]
+    print(f"Creating order for {intent}")
+    return {"Item": intent}
 
 
 
