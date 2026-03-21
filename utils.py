@@ -13,15 +13,30 @@ def add_item_to_order(order_id, items, qtys):
         price = items_list[item['name']]['price']
         db.insert_order_item(order_id, item['name'], qtys[i], price * qtys[i])
 
-def order_complete(order_id):
-    db.update_order_status(order_id, 'completed')
-    return "Order completed successfully"
+def order_complete(order_id, status='completed'):
+    db.update_order_status(order_id, status)
 
-def get_order_details(order_id):
-    order = db.fetch_orders(order_id)[0]
-    items = db.fetch_items(order_id)
+def get_order_by_id(order_id):
+    orders = db.fetch_orders(order_id=order_id)
+    if not orders:
+        return None
+    order = orders[0]
+    return order_details(order)
+
+def get_order_by_session(session_id):
+    orders = db.fetch_orders(session_id=session_id)
+    if not orders:
+        return None
+    order = orders[0]
+    return order_details(order)
+
+def order_details(order):
+    items = db.fetch_items(order['id'])
     return {
-        "order_id": order_id,
+        "order_id": order['id'],
         "status": order['status'],
         "items": items
     }
+
+def fetch_all_items():
+    return db.fetch_items()

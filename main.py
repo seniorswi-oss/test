@@ -26,25 +26,42 @@ async def webhook(request: fastapi.Request):
     intent = body["queryResult"]["intent"]["displayName"]
     params = body["queryResult"]["parameters"]
     action = body["queryResult"]["action"]
+    session_id = body["session"].split("/")[-1]
+    params['session_id'] = session_id
 
-    action_lists = ['place-order', 'add-item', 'remove-item']
-
-    if action in action_lists:
-        action = action.replace('-', '_')
-        func = getattr(utils, action)
-        result = func(**params)
+    if action == 'place-order':
+        params['status'] = 'pending'
+        result = utils.place_order(**params)
+    elif action == 'add-item':
+        order = utils.get_order_by_session(session_id=session_id)[0]
+        order_id = order['order_id']
+        items = utils.fetch_all_items()
+        for item in params['items']:
+            item_id = items[item['name']]['item_id']
+            utils.insert_order_item(order_id=order_id, item_id=item_id, qty=item['qty'], total=item['qty'] * item['total'])
+        result = "Items added successfully"
+    elif action == 'remove-item':
+        order = utils.get_order_by_session(session_id=session_id)[0]
+        order_id = order['order_id']
+        items = utils.fetch_all_items()
+        for item in params['items']:
+            item_id = items[item['name']]['item_id']
+            if item['qty']:
+                utils.update_order_item(order_id=order_id, item_id=item_id, qty=item['qty'], total=item['qty'] * item['total'])
+            else:
+                utils.remove_order_item(order_id=order_id, item_id=item_id)
+        result = "Items removed successfully"
     elif action == 'order-complete':
-        result = utils.order_complete()
+        params['status'] = 'completed'
+        utils.order_complete(**params)
+        result = "Order completed successfully"
 
-    print(action)
-    print(intent)
-    print(params)
     return {
         "fulfillmentMessages": [
             {
             "text": {
                 "text": [
-                "Text response from webhook"
+                    result
                 ]
             }
             }
