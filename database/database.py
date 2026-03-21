@@ -75,9 +75,41 @@ def init_db():
     global db
     result = db.execute("""
         
-  DROP TABLE IF EXISTS orders_items;
-    DROP TABLE IF EXISTS orders;
-    DROP TABLE IF EXISTS items;
+    CREATE TABLE IF NOT EXISTS items (
+        item_id SERIAL PRIMARY KEY,
+        name TEXT UNIQUE NOT NULL,
+        price NUMERIC(10, 2) NOT NULL
+    );
+    CREATE TABLE IF NOT EXISTS orders (
+        id SERIAL PRIMARY KEY,
+        status TEXT NOT NULL,
+        session_id TEXT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS orders_items (
+        id SERIAL PRIMARY KEY,
+        order_id INTEGER REFERENCES orders(id),
+        item_id INTEGER REFERENCES items(item_id),
+        qty INTEGER NOT NULL,
+        total NUMERIC(10, 2) NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    INSERT INTO items (name, price) VALUES
+        ('Pav Bhaji', 6.00), 
+        ('Dosa', 5.00), 
+        ('Idli', 4.00), 
+        ('Chole Bhature', 7.00),
+        ('Vada Pav', 3.00),
+        ('Pani Puri', 4.50),
+        ('Pizza', 8.00),
+        ('Burger', 6.50),
+        ('Samosa', 2.00),
+        ('Jalebi', 3.50),
+        ('Chai', 2.00),
+        ('Coffee', 3.00),
+        ('Lassi', 4.00)
+        ON CONFLICT (name) DO NOTHING;
                
     """)
+
     print(result)
