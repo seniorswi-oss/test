@@ -44,7 +44,7 @@ async def webhook(request: fastapi.Request):
         order_id = order['order_id']
         items = utils.fetch_all_items()
         for item in params['items']:
-            item_id = items[item['name']]['item_id']
+            item_id = items[item]['item_id']
             utils.insert_order_item(order_id=order_id, item_id=item_id, qty=item['qty'], total=item['qty'] * item['total'])
         result = "Items added successfully"
     elif action == 'remove-item':
@@ -52,7 +52,7 @@ async def webhook(request: fastapi.Request):
         order_id = order['order_id']
         items = utils.fetch_all_items()
         for item in params['items']:
-            item_id = items[item['name']]['item_id']
+            item_id = items[item]['item_id']
             if item['qty']:
                 utils.update_order_item(order_id=order_id, item_id=item_id, qty=item['qty'], total=item['qty'] * item['total'])
             else:
