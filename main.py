@@ -21,6 +21,29 @@ def db_create():
 @app.post("/webhook")
 async def webhook(request: fastapi.Request):
 
+    # params = {
+    #   "items": [
+    #     "chai"
+    #   ],
+    #   "qty": [
+    #     4
+    #   ]
+    # }
+
+    # order = utils.get_order_by_session(session_id='4bce05cb-1890-9633-50cb-864883610998')
+    # print(order)
+    # order_id = order['order_id']
+    # items = utils.fetch_all_items()
+    # print(items)
+    # for item in items:
+    #     for i in params['items']:
+    #         if item['name'] == i:
+    #             item_id = item['item_id']
+    #             utils.insert_order_item(order_id=order_id, item_id=item_id, qty=item['qty'], total=item['qty'] * item['total'])
+    # result = "Items added successfully"
+
+    # return '{"fulfillmentMessages": [{"text": {"text": ["Items added successfully"]}}]}', 200
+
     # order = utils.get_order_by_session(session_id='4bce05cb-1890-9633-50cb-864883610998')
 
     # print(order['order_id'])
@@ -43,9 +66,11 @@ async def webhook(request: fastapi.Request):
         order = utils.get_order_by_session(session_id=session_id)
         order_id = order['order_id']
         items = utils.fetch_all_items()
-        for item in params['items']:
-            item_id = items[item]['item_id']
-            utils.insert_order_item(order_id=order_id, item_id=item_id, qty=item['qty'], total=item['qty'] * item['total'])
+        for item in items:
+            for i in params['items']:
+                if item['name'] == i:
+                    item_id = item['item_id']
+                    utils.insert_order_item(order_id=order_id, item_id=item_id, qty=item['qty'], total=item['qty'] * item['total'])
         result = "Items added successfully"
     elif action == 'remove-item':
         order = utils.get_order_by_session(session_id=session_id)
