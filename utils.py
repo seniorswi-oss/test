@@ -9,9 +9,14 @@ def place_order(status, session_id, items=[], qtys=[]):
 
 def add_item_to_order(order_id, items, qtys):
     items_list = db.fetch_items()
-    for i, item in enumerate(items):
-        price = items_list[item['name']]['price']
-        db.insert_order_item(order_id, item['name'], qtys[i], price * qtys[i])
+    for item in items_list:
+        for i in items:
+            if item['name'].lower() == i.lower():
+                print("test")
+                print(item['name'].lower(), i)
+                item_id = item['item_id']
+                qty = qtys[items.index(i)]
+                db.insert_order_item(order_id, item_id, qty, item['price'] * qty)
 
 def order_complete(order_id, status='completed'):
     db.update_order_status(order_id, status)
@@ -31,9 +36,11 @@ def get_order_by_session(session_id):
     return order_details(order)
 
 def order_details(order):
+    print(order)
     items = db.fetch_items(order['id'])
     return {
         "order_id": order['id'],
+        'session_id': order['session_id'],
         "status": order['status'],
         "items": items
     }

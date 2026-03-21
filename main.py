@@ -22,9 +22,10 @@ def db_create():
 @app.post("/webhook")
 async def webhook(request: fastapi.Request):
 
+    # order = database.fetch_items(4)
  
 
-    # order = utils.fetch_all_orders()
+    # # order = utils.fetch_all_orders()
 
     # print(order)
     # return {"message": "Webhook received"}, 200
@@ -47,16 +48,13 @@ async def webhook(request: fastapi.Request):
             result = "You already have an active order. Please complete it before placing a new one."
         else:
             result = utils.place_order(status = params['status'], session_id = params['session_id'])
+
     elif action == 'add-item':
         order = utils.get_order_by_session(session_id=session_id)
         order_id = order['order_id']
-        items = utils.fetch_all_items()
-        for item in items:
-            for i in params['items']:
-                if item['name'] == i:
-                    item_id = item['item_id']
-                    utils.insert_order_item(order_id=order_id, item_id=item_id, qty=item['qty'], total=item['qty'] * item['total'])
+        utils.add_item_to_order(order_id=order_id, items=params['items'], qtys=params['qty'])
         result = "Items added successfully"
+
     elif action == 'remove-item':
         order = utils.get_order_by_session(session_id=session_id)
         order_id = order['order_id']

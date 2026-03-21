@@ -32,7 +32,7 @@ def fetch_items(order_id=None):
     global db
     if order_id is not None:
         return db.fetch_all(
-            "SELECT i.* FROM items i JOIN orders_items oi ON i.item_id = oi.item_id WHERE oi.order_id = %s",
+            "SELECT * FROM orders_items oi WHERE oi.order_id = %s",
             (order_id,)
         )
     return db.fetch_all("SELECT * FROM items")
