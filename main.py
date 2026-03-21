@@ -21,11 +21,16 @@ def db_create():
 @app.post("/webhook")
 async def webhook(request: fastapi.Request):
 
+    # order = utils.fetch_all_orders()
+
+    # print(order)
+    # return {"message": "Webhook received"}, 200
+
     body = await request.json()
 
     print(body)
 
-    intent = body["queryResult"]["intent"]["displayName"]
+    # intent = body["queryResult"]["intent"]["displayName"]
     params = body["queryResult"]["parameters"]
     action = body["queryResult"]["action"]
     session_id = body["session"].split("/")[-1]

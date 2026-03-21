@@ -9,16 +9,10 @@ def connect_db():
 
 def insert_order(session_id, status='pending'):
     global db
-    result = db.execute(
-        "SELECT COLUMN_NAME, DATA_TYPE, CHARACTER_MAXIMUM_LENGTH, IS_NULLABLE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'orders';",
-            fetch=True
+    db.insert(
+        "INSERT INTO orders (status, session_id) VALUES (%s, %s)",
+        (status, session_id)
     )
-    print("test")
-    print(result)
-    # db.insert(
-    #     "INSERT INTO orders (status, session_id) VALUES (%s, %s)",
-    #     (status, session_id)
-    # )
 
 def insert_order_item(order_id, item_id, qty, total):
     global db
