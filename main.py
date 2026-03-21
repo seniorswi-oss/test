@@ -15,38 +15,18 @@ def read_root():
 
 @app.post("/db_create")
 def db_create():
+    print("Received a POST request at /db_create")
     database.init_db()
     return {"message": "Generated Database"}, 200
 
 @app.post("/webhook")
 async def webhook(request: fastapi.Request):
 
-    # params = {
-    #   "items": [
-    #     "chai"
-    #   ],
-    #   "qty": [
-    #     4
-    #   ]
-    # }
+ 
 
-    # order = utils.get_order_by_session(session_id='4bce05cb-1890-9633-50cb-864883610998')
+    # order = utils.fetch_all_orders()
+
     # print(order)
-    # order_id = order['order_id']
-    # items = utils.fetch_all_items()
-    # print(items)
-    # for item in items:
-    #     for i in params['items']:
-    #         if item['name'] == i:
-    #             item_id = item['item_id']
-    #             utils.insert_order_item(order_id=order_id, item_id=item_id, qty=item['qty'], total=item['qty'] * item['total'])
-    # result = "Items added successfully"
-
-    # return '{"fulfillmentMessages": [{"text": {"text": ["Items added successfully"]}}]}', 200
-
-    # order = utils.get_order_by_session(session_id='4bce05cb-1890-9633-50cb-864883610998')
-
-    # print(order['order_id'])
     # return {"message": "Webhook received"}, 200
 
     body = await request.json()
@@ -61,7 +41,12 @@ async def webhook(request: fastapi.Request):
 
     if action == 'place-order':
         params['status'] = 'pending'
-        result = utils.place_order(status = params['status'], session_id = params['session_id'])
+        order = utils.get_order_by_session(session_id=session_id)
+        print(order)
+        if order:
+            result = "You already have an active order. Please complete it before placing a new one."
+        else:
+            result = utils.place_order(status = params['status'], session_id = params['session_id'])
     elif action == 'add-item':
         order = utils.get_order_by_session(session_id=session_id)
         order_id = order['order_id']
