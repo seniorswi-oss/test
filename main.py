@@ -20,8 +20,7 @@ def db_create():
 @app.post("/webhook")
 async def webhook(request: fastapi.Request):
 
-    
-
+ 
     body = await request.json()
 
     print(body)
@@ -34,7 +33,7 @@ async def webhook(request: fastapi.Request):
 
     if action == 'place-order':
         params['status'] = 'pending'
-        result = utils.place_order(**params)
+        result = utils.place_order(status = params['status'], session_id = params['session_id'], items = params['items'], qtys = params['qtys'])
     elif action == 'add-item':
         order = utils.get_order_by_session(session_id=session_id)[0]
         order_id = order['order_id']
@@ -56,7 +55,9 @@ async def webhook(request: fastapi.Request):
         result = "Items removed successfully"
     elif action == 'order-complete':
         params['status'] = 'completed'
-        utils.order_complete(**params)
+        order = utils.get_order_by_session(session_id=session_id)[0]
+        params['order_id'] = order['order_id']
+        utils.order_complete(order_id=params['order_id'], status=params['status'])
         result = "Order completed successfully"
 
     return {
