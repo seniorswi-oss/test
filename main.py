@@ -20,7 +20,7 @@ def db_create():
 @app.post("/webhook")
 async def webhook(request: fastapi.Request):
 
- 
+
     body = await request.json()
 
     print(body)
@@ -33,7 +33,7 @@ async def webhook(request: fastapi.Request):
 
     if action == 'place-order':
         params['status'] = 'pending'
-        result = utils.place_order(status = params['status'], session_id = params['session_id'], items = params['items'], qtys = params['qtys'])
+        result = utils.place_order(status = params['status'], session_id = params['session_id'])
     elif action == 'add-item':
         order = utils.get_order_by_session(session_id=session_id)[0]
         order_id = order['order_id']
