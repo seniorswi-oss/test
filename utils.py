@@ -1,10 +1,10 @@
 from database import database as db
 
-def place_order(**params):
-    order_id = db.insert_order(params.get('status'), params.get('session_id'))
-    if len(params.get('items', [])) == 0:
+def place_order(status, session_id, items=[], qtys=[]):
+    order_id = db.insert_order(session_id, status)
+    if len(items) == 0:
         return order_id
-    add_item_to_order(order_id, params.get('items'), params.get('qtys'))
+    add_item_to_order(order_id, items, qtys)
     return order_id
 
 def add_item_to_order(order_id, items, qtys):
