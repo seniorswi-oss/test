@@ -1,7 +1,7 @@
 from database import database as db
 
-def place_order(status, items, qtys):
-    order_id = db.insert_order(status)
+def place_order(status, session_id, items, qtys):
+    order_id = db.insert_order(status, session_id)
     if len(items) == 0:
         return order_id
     add_item_to_order(order_id, items, qtys)
@@ -37,6 +37,9 @@ def order_details(order):
         "status": order['status'],
         "items": items
     }
+
+def fetch_all_orders():
+    return db.fetch_orders()
 
 def fetch_all_items():
     return db.fetch_items()

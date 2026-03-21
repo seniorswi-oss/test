@@ -19,7 +19,7 @@ class PostgresDB:
         self.kwargs = kwargs
 
     def connect(self):
-        if self.db_url:
+        if DATABASE_URL:
             self.conn = psycopg2.connect(DATABASE_URL, sslmode="require")
         else:
             self.conn = psycopg2.connect(
