@@ -29,12 +29,12 @@ async def webhook(request: fastapi.Request):
 
     action_lists = ['place-order', 'add-item', 'remove-item']
 
-    # if action in action_lists:
-    #     action = action.replace('-', '_')
-    #     func = getattr(utils, action)
-    #     result = func(**params)
-    # elif action == 'order-complete':
-    #     result = utils.order_complete()
+    if action in action_lists:
+        action = action.replace('-', '_')
+        func = getattr(utils, action)
+        result = func(**params)
+    elif action == 'order-complete':
+        result = utils.order_complete()
 
     print(action)
     print(intent)
