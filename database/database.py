@@ -9,10 +9,16 @@ def connect_db():
 
 def insert_order(session_id, status='pending'):
     global db
-    db.insert(
-        "INSERT INTO orders (status, session_id) VALUES (%s, %s)",
-        (status, session_id)
+    result = db.execute(
+        "SELECT COLUMN_NAME, DATA_TYPE, CHARACTER_MAXIMUM_LENGTH, IS_NULLABLE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'orders';",
+            fetch=True
     )
+    print("test")
+    print(result)
+    # db.insert(
+    #     "INSERT INTO orders (status, session_id) VALUES (%s, %s)",
+    #     (status, session_id)
+    # )
 
 def insert_order_item(order_id, item_id, qty, total):
     global db
@@ -67,41 +73,11 @@ def update_order_status(order_id, status):
 
 def init_db():
     global db
-    db.execute("""
+    result = db.execute("""
         
-    CREATE TABLE IF NOT EXISTS items (
-        item_id SERIAL PRIMARY KEY,
-        name TEXT UNIQUE NOT NULL,
-        price NUMERIC(10, 2) NOT NULL
-    );
-    CREATE TABLE IF NOT EXISTS orders (
-        id SERIAL PRIMARY KEY,
-        status TEXT NOT NULL,
-        session_id TEXT NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS orders_items (
-        id SERIAL PRIMARY KEY,
-        order_id INTEGER REFERENCES orders(id),
-        item_id INTEGER REFERENCES items(item_id),
-        qty INTEGER NOT NULL,
-        total NUMERIC(10, 2) NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    );
-    INSERT INTO items (name, price) VALUES
-        ('Pav Bhaji', 6.00), 
-        ('Dosa', 5.00), 
-        ('Idli', 4.00), 
-        ('Chole Bhature', 7.00),
-        ('Vada Pav', 3.00),
-        ('Pani Puri', 4.50),
-        ('Pizza', 8.00),
-        ('Burger', 6.50),
-        ('Samosa', 2.00),
-        ('Jalebi', 3.50),
-        ('Chai', 2.00),
-        ('Coffee', 3.00),
-        ('Lassi', 4.00)
-        ON CONFLICT (name) DO NOTHING;
+  DROP TABLE IF EXISTS orders_items;
+    DROP TABLE IF EXISTS orders;
+    DROP TABLE IF EXISTS items;
                
     """)
+    print(result)

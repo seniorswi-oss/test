@@ -39,15 +39,23 @@ class PostgresDB:
             self.connect()
 
         with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
-            if many:
-                cur.executemany(query, params)
-            else:
-                cur.execute(query, params)
+            try:
+                if many:
+                    cur.executemany(query, params)
+                else:
+                    cur.execute(query, params)
+                
+                if fetch:
+                    return cur.fetchall()
 
-            if fetch:
-                return cur.fetchall()
+                self.conn.commit()
 
-            self.conn.commit()
+            except Exception as e:
+                print(f"Error occurred while executing query: {e}")
+                self.conn.rollback()
+                raise
+
+            
             return {"status": "success"}
 
     def fetch_all(self, query, params=None):
@@ -58,7 +66,11 @@ class PostgresDB:
         return results[0] if results else None
 
     def insert(self, query, params=None):
-        return self.execute(query, params)
+        try:
+            return self.execute(query, params)
+        except Exception as e:
+            print(f"Error occurred while inserting data: {e}")
+            raise
 
     def update(self, query, params=None):
         return self.execute(query, params)

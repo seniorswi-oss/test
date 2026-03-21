@@ -15,11 +15,13 @@ def read_root():
 
 @app.post("/db_create")
 def db_create():
+    database.init_db()
     return {"message": "Generated Database"}, 200
 
 @app.post("/webhook")
 async def webhook(request: fastapi.Request):
 
+   
 
     body = await request.json()
 
