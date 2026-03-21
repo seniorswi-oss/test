@@ -45,7 +45,7 @@ async def webhook(request: fastapi.Request):
         order = utils.get_order_by_session(session_id=session_id)
         print(order)
         if order:
-            result = "You already have an active order. Please complete it before placing a new one."
+            result = "You already have an active order. Please order more items or complete your existing order before placing a new one."
         else:
             result = utils.place_order(status = params['status'], session_id = params['session_id'])
 
@@ -58,14 +58,10 @@ async def webhook(request: fastapi.Request):
     elif action == 'remove-item':
         order = utils.get_order_by_session(session_id=session_id)
         order_id = order['order_id']
-        items = utils.fetch_all_items()
-        for item in params['items']:
-            item_id = items[item]['item_id']
-            if item['qty']:
-                utils.update_order_item(order_id=order_id, item_id=item_id, qty=item['qty'], total=item['qty'] * item['total'])
-            else:
-                utils.remove_order_item(order_id=order_id, item_id=item_id)
+        qty = params['qty'] if params['qty'] else []
+        utils.remove_item_from_order(order_id=order_id, items=params['items'], qtys=qty)
         result = "Items removed successfully"
+        
     elif action == 'order-complete':
         params['status'] = 'completed'
         order = utils.get_order_by_session(session_id=session_id)

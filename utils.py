@@ -18,25 +18,40 @@ def add_item_to_order(order_id, items, qtys):
                 qty = qtys[items.index(i)]
                 db.insert_order_item(order_id, item_id, qty, item['price'] * qty)
 
+def remove_item_from_order(order_id, items, qtys):
+    items_list = db.fetch_items()
+    for item in items_list:
+        for i in items:
+            if item['name'].lower() == i.lower():
+                print("test")
+                print(item['name'].lower(), i)
+                item_id = item['item_id']
+                qty = qtys[items.index(i)]
+                if len(qtys) > 0 and qty > 0:
+                    db.update_order_item(order_id, item_id, qty, item['price'] * qty)
+                else:
+                    db.remove_order_item(order_id, item_id)
+
 def order_complete(order_id, status='completed'):
     db.update_order_status(order_id, status)
 
 def get_order_by_id(order_id):
     orders = db.fetch_orders(order_id=order_id)
     if not orders:
-        return None
+        return "Order not found"
     order = orders[0]
     return order_details(order)
 
 def get_order_by_session(session_id):
     orders = db.fetch_orders(session_id=session_id)
     if not orders:
-        return None
+        place_order('pending', session_id)
+        orders = db.fetch_orders(session_id=session_id)
+
     order = orders[0]
     return order_details(order)
 
 def order_details(order):
-    print(order)
     items = db.fetch_items(order['id'])
     return {
         "order_id": order['id'],
