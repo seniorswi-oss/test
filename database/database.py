@@ -51,6 +51,14 @@ def fetch_orders(session_id=None, order_id=None):
         )
     return db.fetch_all("SELECT * FROM orders")
 
+def fetch_cart_item(order_id, item_id):
+    global db
+    items = db.fetch_all(
+        "SELECT * FROM orders_items WHERE order_id = %s AND item_id = %s",
+        (order_id, item_id)
+    )
+    return items[0] if items else None
+
 def update_order_item(order_id, item_id, qty, total):
     global db
     db.update(
