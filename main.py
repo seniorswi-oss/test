@@ -47,8 +47,8 @@ async def webhook(request: fastapi.Request):
         if not order:
             utils.place_order(status = params['status'], session_id = params['session_id'])
         result = utils.fetch_all_items()
-        result = pd.DataFrame(result).to_string()
-        # result = result.to_latex
+        result = pd.DataFrame(result)
+        result = result.to_string(index=False)
 
     elif action == 'add-item':
         order = utils.get_order_by_session(session_id=session_id)
