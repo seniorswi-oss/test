@@ -8,30 +8,35 @@ def place_order(status, session_id, items=[], qtys=[]):
     return order_id
 
 def add_item_to_order(order_id, items, qtys):
-    items_list = db.fetch_items()
-    for item in items_list:
-        for i in items:
-            if item['name'].lower() == i.lower():
-                item_id = item['item_id']
-                qty = qtys[items.index(i)]
-                print(qty)
-                print(item['price'])
-                total_price = float(item['price']) * float(qty)
-                db.insert_order_item(order_id, item_id, qty, total_price)
+    items_map = {i['name'].lower(): i for i in db.fetch_items()}
+
+    for name, qty in zip(items, qtys):
+        item = items_map.get(name.lower())
+        if not item:
+            continue
+
+        cart = db.fetch_cart_item(order_id, item['item_id'])
+        new_qty = cart['qty'] + qty if cart else qty
+        total = float(item['price']) * float(new_qty)
+
+        (db.update_order_item if cart else db.insert_order_item)(
+            order_id, item['item_id'], new_qty if cart else qty, total
+        )
 
 def remove_item_from_order(order_id, items, qtys):
-    items_list = db.fetch_items()
-    for item in items_list:
-        for i in items:
-            if item['name'].lower() == i.lower():
-                print("test")
-                print(item['name'].lower(), i)
-                item_id = item['item_id']
-                qty = qtys[items.index(i)]
-                if len(qtys) > 0 and qty > 0:
-                    db.update_order_item(order_id, item_id, qty, item['price'] * qty)
-                else:
-                    db.remove_order_item(order_id, item_id)
+    items_map = {i['name'].lower(): i for i in db.fetch_items()}
+
+    for name, qty in zip(items, qtys):
+        item = items_map.get(name.lower())
+        if not item:
+            continue
+
+        (db.update_order_item if qty > 0 else db.remove_order_item)(
+            order_id,
+            item['item_id'],
+            qty,
+            float(item['price']) * float(qty)
+        ) if qty > 0 else db.remove_order_item(order_id, item['item_id'])
 
 def order_complete(order_id, status='completed'):
     db.update_order_status(order_id, status)
