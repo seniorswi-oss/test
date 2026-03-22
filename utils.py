@@ -12,11 +12,12 @@ def add_item_to_order(order_id, items, qtys):
     for item in items_list:
         for i in items:
             if item['name'].lower() == i.lower():
-                print("test")
-                print(item['name'].lower(), i)
                 item_id = item['item_id']
                 qty = qtys[items.index(i)]
-                db.insert_order_item(order_id, item_id, qty, item['price'] * qty)
+                print(qty)
+                print(item['price'])
+                total_price = item['price'] * qty
+                db.insert_order_item(order_id, item_id, qty, total_price)
 
 def remove_item_from_order(order_id, items, qtys):
     items_list = db.fetch_items()
