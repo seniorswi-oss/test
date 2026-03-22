@@ -16,7 +16,7 @@ def add_item_to_order(order_id, items, qtys):
                 qty = qtys[items.index(i)]
                 print(qty)
                 print(item['price'])
-                total_price = item['price'] * qty
+                total_price = float(item['price']) * float(qty)
                 db.insert_order_item(order_id, item_id, qty, total_price)
 
 def remove_item_from_order(order_id, items, qtys):
