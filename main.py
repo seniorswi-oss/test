@@ -2,6 +2,7 @@ import fastapi
 import uvicorn
 from database import database
 import utils
+import pandas as pd
 
 database.connect_db()
 
@@ -43,11 +44,11 @@ async def webhook(request: fastapi.Request):
     if action == 'place-order':
         params['status'] = 'pending'
         order = utils.get_order_by_session(session_id=session_id)
-        print(order)
-        if order:
-            result = "You already have an active order. Please order more items or complete your existing order before placing a new one."
-        else:
-            result = utils.place_order(status = params['status'], session_id = params['session_id'])
+        if not order:
+            utils.place_order(status = params['status'], session_id = params['session_id'])
+        result = utils.fetch_all_items()
+        result = pd.DataFrame(result).to_string()
+        # result = result.to_latex
 
     elif action == 'add-item':
         order = utils.get_order_by_session(session_id=session_id)

@@ -16,11 +16,11 @@ def add_item_to_order(order_id, items, qtys):
             continue
 
         cart = db.fetch_cart_item(order_id, item['item_id'])
-        new_qty = cart['qty'] + qty if cart else qty
+        new_qty = cart['qty'] + qty if cart and cart['order_status'] == 'pending' else qty
         total = float(item['price']) * float(new_qty)
 
         (db.update_order_item if cart else db.insert_order_item)(
-            order_id, item['item_id'], new_qty if cart else qty, total
+            order_id, item['item_id'], new_qty if cart and cart['order_status'] == 'pending' else qty, total, 'pending'
         )
 
 def remove_item_from_order(order_id, items, qtys):
@@ -35,7 +35,8 @@ def remove_item_from_order(order_id, items, qtys):
             order_id,
             item['item_id'],
             qty,
-            float(item['price']) * float(qty)
+            float(item['price']) * float(qty),
+            'pending'
         ) if qty > 0 else db.remove_order_item(order_id, item['item_id'])
 
 def order_complete(order_id, status='completed'):

@@ -14,18 +14,18 @@ def insert_order(session_id, status='pending'):
         (status, session_id)
     )
 
-def insert_order_item(order_id, item_id, qty, total):
+def insert_order_item(order_id, item_id, qty, total, status='pending'):
     global db
     db.insert(
-        "INSERT INTO orders_items (order_id, item_id, qty, total) VALUES (%s, %s, %s, %s)",
-        (order_id, item_id, qty, total)
+        "INSERT INTO orders_items (order_id, item_id, qty, total, order_status) VALUES (%s, %s, %s, %s, %s)",
+        (order_id, item_id, qty, total, status)
     )
 
-def remove_order_item(order_id, item_id):
+def remove_order_item(order_id, item_id, status='pending'):
     global db
     db.delete(
-        "DELETE FROM orders_items WHERE order_id = %s AND item_id = %s",
-        (order_id, item_id)
+        "DELETE FROM orders_items WHERE order_id = %s AND item_id = %s AND order_status = %s",
+        (order_id, item_id, status)
     )
 
 def fetch_items(order_id=None):
@@ -59,17 +59,21 @@ def fetch_cart_item(order_id, item_id):
     )
     return items[0] if items else None
 
-def update_order_item(order_id, item_id, qty, total):
+def update_order_item(order_id, item_id, qty, total, status='pending'):
     global db
     db.update(
-        "UPDATE orders_items SET qty = %s, total = %s WHERE order_id = %s AND item_id = %s",
-        (qty, total, order_id, item_id)
+        "UPDATE orders_items SET qty = %s, total = %s, order_status = %s WHERE order_id = %s AND item_id = %s",
+        (qty, total, status, order_id, item_id)
     )
 
 def update_order_status(order_id, status):
     global db
     db.update(
         "UPDATE orders SET status = %s WHERE id = %s",
+        (status, order_id)
+    )
+    db.update(
+        "UPDATE orders_items SET order_status = %s WHERE order_id = %s",
         (status, order_id)
     )
 
@@ -94,6 +98,7 @@ def init_db():
         item_id INTEGER REFERENCES items(item_id),
         qty INTEGER NOT NULL,
         total NUMERIC(10, 2) NOT NULL,
+        order_status TEXT NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
     INSERT INTO items (name, price) VALUES
