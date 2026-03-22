@@ -12,7 +12,7 @@ app = fastapi.FastAPI()
 @app.get("/")
 def read_root():
     print("Received a GET request at /")
-    return {"message": "Hello, World!"}, 200
+    return '<iframe height="430" width="350" src="https://bot.dialogflow.com/41a7d182-1fd6-425d-9076-9406afa18931"></iframe>'
 
 @app.post("/db_create")
 def db_create():
