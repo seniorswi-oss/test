@@ -9,7 +9,7 @@ database.connect_db()
 API_BASE = ""
 
 app = fastapi.FastAPI()
-@app.get("/")
+@app.get("/", response_class=fastapi.responses.HTMLResponse)
 def read_root():
     print("Received a GET request at /")
     return '<iframe height="430" width="350" src="https://bot.dialogflow.com/41a7d182-1fd6-425d-9076-9406afa18931"></iframe>'
